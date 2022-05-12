@@ -12,8 +12,8 @@ exports.subAdmin_signup = async (req,res) =>{
         password = await bcrypt.hash(password,salt);
         const subAdminRequest = {firstName,lastName,email,mobileNumber,password,address};
         const subAdminData = await subAdminModel.create(subAdminRequest);
-        const subData =  await adminModel.findOneAndUpdate({_id:adminId},{$push:{subAdmin:subAdminData._id},new:true});
-        console.log(subData)
+         await adminModel.findOneAndUpdate({_id:adminId},{$push:{allSubAdminId:subAdminData._id},new:true});
+       
         return res.status(201).send({message:"Sub Admin created successfully",data:subAdminData});
     }catch(err){
         return res.status(500).send(err.message);

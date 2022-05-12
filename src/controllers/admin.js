@@ -18,17 +18,17 @@ exports.admin_signup = async (req,res) =>{
 
 exports.admin_login = async (req,res) =>{
     try{
-        const adminEmail = req.body;
-        const adminPassword = req.body;
+        const adminEmail = req.body.email;
+        const adminPassword = req.body.password;
         const adminData = await adminModel.findOne({email:adminEmail});
-        if(user){
-            const {_id,firstName,lastName,password} = user;
+        if(adminData){
+            const {_id,firstName,lastName,password} = adminData;
             const validPassword = await bcrypt.compare(adminPassword,password);
             if(!validPassword){
                 return res.status(400).send({message:"Invalid Password"});
             };
             let payload = {userId:_id,email:adminEmail};
-            const generatedToken = jwt.sign(payload,"sports-e-commerce",{expiresIn:'10080'});
+            const generatedToken = jwt.sign(payload,"sports-e-commerce",{expiresIn:'10080m'});
             res.header("jwt-token",generatedToken);
             return res.status(201).send({message:`${firstName} ${lastName} You are logged in`,token:generatedToken});
         }else{

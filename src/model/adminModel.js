@@ -57,34 +57,16 @@ const adminSchema = new mongoose.Schema({
       trim: true,
     },
   },
-  storeData:[
+  allStoreId:[
       {
-        _id:false,
-        storeId:{ 
-              type:ObjectId, 
-              ref:'vender', 
-              trim:true 
-        },
-        storName:{ 
-            type:String,
-            trim:true
-        } 
+       type:ObjectId,
+       ref:"store"
       }
   ],
-  subAdmin:[
+  allSubAdminId:[
     {
-      _id:false,
-      subAdminId:{ 
-            
-      },
-      subAdminFirstName:{ 
-          type:String,
-          trim:true
-      },
-      subAdminLastName:{ 
-        type:String,
-        trim:true
-    } 
+      type:ObjectId,
+      ref:"subAccessor"
     }
 ]
 },{timestamps:true});

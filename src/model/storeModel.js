@@ -3,46 +3,40 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const venderSchema = new mongoose.Schema(
   {
-    
-    venderName: { 
+    adminId:{
+      type:ObjectId,
+      ref:"accessor",
+      trim:true
+    },
+    storeName: { 
           type: String, 
           required: true, 
           trim: true 
       },
-    venderImage: { 
-          type: String, 
-          required: true, 
-          trim: true 
-      },
-    
-    accessor:[
-          {
-                _id:false,    
-                accessorId:{ 
-                      type:ObjectId, 
-                      ref:'accessor', 
-                      trim:true 
-                  },
-                accessorType:{ 
-                      type:String, 
-                      trim:true 
-                  }
-          }
-    ],
+    // venderImage: { 
+    //       type: String, 
+    //       required: true, 
+    //       trim: true 
+    //   },
+    storeSize: { 
+      type: String, 
+      required: true, 
+      trim: true 
+  },
+  storeCapacity: { 
+    type: String, 
+    required: true, 
+    trim: true 
+  },
+   
     subAccessor:[
       {
-        _id:false,
-      subAccessorId:{
-          type:ObjectId,
-          ref:'subAccessor',
-          trim:true
-      },
-        subAccessorName:{
-           type:String,
-           trim:true
-      }
+        type:ObjectId,
+        ref:'subAccessor',
+        trim:true
       }  
     ],
+   
     deletedAt: { 
           type: Date, 
           default: null 
@@ -67,7 +61,7 @@ const venderSchema = new mongoose.Schema(
             required: true, 
             trim: true 
       },
-      pincode: {
+      pinCode: {
         type: Number,
         required: true,
         trim: true,
@@ -77,4 +71,4 @@ const venderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.Model("store", venderSchema);
+module.exports = mongoose.model("store", venderSchema);

@@ -2,10 +2,15 @@ const mongoose=require('mongoose');
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const productSchema = new mongoose.Schema({
-    brandId:{
-        type:ObjectId,
+    
+    brandName:{
+        type:String,
         required:true,
-        ref:'brand',
+        trim:true
+    },
+    productName:{
+        type:String,
+        required:true,
         trim:true
     },
     title: {
@@ -44,11 +49,11 @@ const productSchema = new mongoose.Schema({
         default: false
     },
 
-    productImage: { // s3 link
-        type: String,
-        required: true,
-        trim: true
-    },
+    // productImage: { // s3 link
+    //     type: String,
+    //     required: true,
+    //     trim: true
+    // },
 
     style: {
         type: String,

@@ -3,20 +3,27 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const brandSchema = new mongoose.Schema(
   {
-    manufacturersId: {
+    adminId: {
       type: ObjectId,
       required: true,
-      ref: "vender",
+      ref: "store",
       trim: true,
     },
-    brandLogo: { 
-        type: String, 
-        required: true, 
-        trim: true 
-      },
+    storeId:{
+      type:ObjectId,
+      required:true,
+      ref:"brand",
+      trim:true
+    },
+    // brandLogo: { 
+    //     type: String, 
+    //     required: true, 
+    //     trim: true 
+    //   },
     brandName: { 
         type: String, 
-        required: true, 
+        required: true,
+        unique:true, 
         trim: true 
       },
     brandType: {
@@ -33,7 +40,7 @@ const brandSchema = new mongoose.Schema(
         default: false 
       },
   },
-  { timestamps }
+  { timestamps:true}
 );
 
 module.exports = mongoose.model("brand", brandSchema);

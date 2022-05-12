@@ -15,6 +15,7 @@ const subAdminSchema = new mongoose.Schema({
     email:{
         type:String,
         required:true,
+        unique:true,
         trim:true
     },
     mobileNumber:{
@@ -47,18 +48,11 @@ const subAdminSchema = new mongoose.Schema({
     },
     storeAccess:[
         {
-          _id:false,
-          storeId:{ 
-                type:ObjectId, 
-                ref:'vender', 
-                trim:true 
-          },
-          storName:{ 
-              type:String,
-              trim:true
-          } 
+            type:ObjectId, 
+            ref:'store', 
+            trim:true 
         }
     ],
 },{timestamps:true});
 
-module.exports = mongoose.model('aubAccessor',subAdminSchema);
+module.exports = mongoose.model('subAccessor',subAdminSchema);

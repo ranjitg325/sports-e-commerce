@@ -1,4 +1,4 @@
-const userModel = require("../model/userModal");
+const userModel = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -12,7 +12,8 @@ exports.user_signup = async (req,res)=>{
         };
         const salt = await bcrypt.genSalt(10);
         password = await bcrypt.hash(password,salt);
-        const userData = {firstName,lastName,gender,dateOfBirth,battingSide,email,phone,password,address};
+        const userRequest = {firstName,lastName,gender,dateOfBirth,battingSide,email,phone,password,address};
+        const userData = await userModel.create(userRequest);
         return res.status(201).send({message:"User signup successfully",data:userData});
     }catch(err){
         return res.status(500).send(err.message);
