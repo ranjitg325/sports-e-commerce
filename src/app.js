@@ -8,6 +8,7 @@ const productRoute = require("./route/product");
 const storeRoute = require("./route/store");
 const subAdminRoute = require("./route/subAdmin");
 const userRoute = require("./route/user");
+const orderRoute = require("./route/order");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/product',productRoute);
 app.use('/store',storeRoute);
 app.use('/subAdmin',subAdminRoute);
 app.use('/user',userRoute);
+app.use('/order',orderRoute);
 
 app.listen( 3000, function () {
     console.log('Express app running on port ' + (3000))

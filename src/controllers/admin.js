@@ -65,3 +65,13 @@ exports.admin_update = async (req,res) =>{
         return res.status(500).send(err.message);
     };
 }
+
+exports.get_admin = async (req,res)=>{
+    try{
+        const adminId = req.user.userId;
+        const adminData = await adminModel.findOne({_id:adminId});
+        return res.status(200).send({setting:{success:"1",message:"admin data",data:adminData}});
+    }catch(err){
+        return res.status(500).send(err.message);
+    };
+}

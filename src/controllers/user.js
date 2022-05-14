@@ -7,9 +7,7 @@ exports.user_signup = async (req,res)=>{
     try{
         let{firstName,lastName,gender,dateOfBirth,battingSide,email,phone,password,address}=req.body;
         const dataExist = await userModel.findOne({email:email});
-        if(dataExist){
-            return res.status(400).send({message:"email already in use"});
-        };
+        if(dataExist) return res.status(400).send({message:"email already in use"});
         const salt = await bcrypt.genSalt(10);
         password = await bcrypt.hash(password,salt);
         const userRequest = {firstName,lastName,gender,dateOfBirth,battingSide,email,phone,password,address};
@@ -25,14 +23,10 @@ exports.login = async (req,res) =>{
         const userEmail = req.body.email;
         const userPassword = req.body.password;
         const dataExist = await userModel.findOne({email:userEmail});
-        if(!emailExist){
-            return res.status(404).send({message:"user dose not exist"});
-        };
+        if(!emailExist) return res.status(404).send({message:"user dose not exist"});
         const {_id,firstName,lastName,password}=dataExist;
         const validPassword = await bcrypt.compare(userPassword,password);
-        if(!validPassword){
-            return res.status(400).send({message:"Invalid Password"});
-        };
+        if(!validPassword) return res.status(400).send({message:"Invalid Password"});
         const payload = { userId:_id,email:userEmail};
         const generatedToken = jwt.sign(payload,"sports-e-commerce",{expiresIn:'10080m'});
         res.header('jwt-token',generatedToken);

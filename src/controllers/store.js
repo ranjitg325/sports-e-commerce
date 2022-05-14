@@ -1,4 +1,4 @@
-const subAdminModel = require("../model/storeModel");
+const subAdminModel = require("../model/subAdminModel");
 const adminModel = require("../model/adminModel");
 const storeModel = require("../model/storeModel");
 
@@ -22,7 +22,8 @@ exports.register_store = async (req,res) =>{
 
 exports.get_store = async (req,res) =>{
     try{
-         
+        const storeData = await storeModel.find();
+        return res.status(200).send({setting:{success:"1",message:"store fetch successfully",Data:storeData}});
     }catch(err){
         return res.status(500).send(err.message);
     };
@@ -57,4 +58,26 @@ exports.delete_store = async (req,res) =>{
     }catch(err){
         return res.status(500).send(err.message);
     };
+}
+
+exports.access_to_subAdmin = async (req,res)=>{
+    try{
+        const adminId = req.user.userId;
+        const {subAdminId,storeId} = req.body;
+        const data = await subAdminModel.updateOne({_id:subAdminId},{$push:{storeAccess:storeId}},{new:true});
+        await storeModel.updateOne({_id:storeId},{$push:{subAccessor:subAdminId}},{new:true});
+        return res.status(200).send({setting:{success:"1",message:"id added successfully",SubAdminData:data}});
+    }catch(err){
+        return res.status(500).send(err.message);
+    }
+}
+
+exports.remove_access = async (req,res)=>{
+    try{
+        const {subAdminId,storeId} = req.body;
+        const storeData= await storeModel.updateOne({_id:storeId},{$pull:{subAccessor:subAdminId}},{new:true});
+        return res.status(200).send({setting:{success:"1",message:"access remove successfully",data:storeData}});
+    }catch(err){
+        return res.status(500).send(err.message);
+    }
 }

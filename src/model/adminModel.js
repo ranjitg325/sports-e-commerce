@@ -61,6 +61,10 @@ const adminSchema = new mongoose.Schema({
       {
        type:ObjectId,
        ref:"store"
+      },
+      {
+        type:String,
+        trim:true,
       }
   ],
   allSubAdminId:[

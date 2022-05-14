@@ -3,7 +3,7 @@ const brandModel = require("../model/brandModel");
 const productModel  = require("../model/productModel");
 
 
-exports.add_brands = async (req,res) =>{
+exports.add_product= async (req,res) =>{
     try{
         const adminId = req.user.userId;
         const adminData = await adminModel.findOne({_id:adminId});
@@ -23,7 +23,7 @@ exports.add_brands = async (req,res) =>{
     };
 }
 
-exports.edit_brand = async (req,res)=>{
+exports.edit_product = async (req,res)=>{
     try{
         const adminId = req.user.userId;
         const adminData = await adminModel.findOne({_id:adminId});
