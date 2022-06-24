@@ -1,14 +1,14 @@
-const adminModel = require("../model/adminModel");
+const adminModel = require("../model/admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 
 exports.admin_signup = async (req,res) =>{
     try{
-        let {firstName,lastName,email,type,phoneNumber,password,address} = req.body;
+        let {firstName,lastName,email,phoneNumber,password,address} = req.body;
         const salt = await bcrypt.genSalt(10);
         password = await bcrypt.hash(password,salt);
-        const userData = {firstName,lastName,email,type,phoneNumber,password,address};
+        const userData = {firstName,lastName,email,phoneNumber,password,address};
         const dataCreated = await adminModel.create(userData);
         return res.status(201).send({message:"Admin created successfully",data:dataCreated});
     }catch(err){

@@ -1,20 +1,18 @@
-const subAdminModel = require("../model/subAdminModel");
-const adminModel = require("../model/adminModel");
-const storeModel = require("../model/storeModel");
+const adminModel = require("../model/admin");
+const storeModel = require("../model/store");
+const userModel = require('../model/user');
+const generator = require("generate-password");
 
 
 exports.register_store = async (req,res) =>{
     try{
         const adminId = req.user.userId;
-        const adminData = await adminModel.findOne({_id:adminId});
-        if(!adminData){
-            return res.status(400).send({setting:{success: "0",message:"You are not authorized"}});
-        };
-        const {storeName,storeSize,storeCapacity,address}= req.body;
-        const storeRequest = {storeName,storeSize,storeCapacity,adminId,address};
-        const storeData = await storeModel.create(storeRequest);
-        await adminModel.findOneAndUpdate({_id:adminId},{$push:{allStoreId:storeData._id}},{new:true});
-        return res.status(201).send({setting:{success:"1",message:"Store register successfully",StoreData:storeData}});
+        const {storeName,address}=req.body;
+        const id = generator.generateMultiple(1,{numbers:true,chars:true,lowercase:true,length:10});
+        const storeId = id[0];
+        const storeData = await storeModel.create({storeId:storeId,storeName:storeName,address:address,adminId:adminId});
+        await adminModel.updateOne({_id:adminId},{$push:{store:storeId}});
+        return res.status(201).send({setting:{success:"1",message:"store registered successfully",data:storeData}});
     }catch(err){
         return res.status(500).send(err.message);
     }
@@ -60,23 +58,31 @@ exports.delete_store = async (req,res) =>{
     };
 }
 
-exports.access_to_subAdmin = async (req,res)=>{
-    try{
-        const adminId = req.user.userId;
-        const {subAdminId,storeId} = req.body;
-        const data = await subAdminModel.updateOne({_id:subAdminId},{$push:{storeAccess:storeId}},{new:true});
-        await storeModel.updateOne({_id:storeId},{$push:{subAccessor:subAdminId}},{new:true});
-        return res.status(200).send({setting:{success:"1",message:"id added successfully",SubAdminData:data}});
-    }catch(err){
-        return res.status(500).send(err.message);
-    }
-}
-
 exports.remove_access = async (req,res)=>{
     try{
         const {subAdminId,storeId} = req.body;
         const storeData= await storeModel.updateOne({_id:storeId},{$pull:{subAccessor:subAdminId}},{new:true});
         return res.status(200).send({setting:{success:"1",message:"access remove successfully",data:storeData}});
+    }catch(err){
+        return res.status(500).send(err.message);
+    }
+}
+
+exports.add_user_to_store = async (req,res) => {
+    try{
+        const adminId = req.user.userId;
+        const adminData = await adminModel.findOneAndUpdate({_id:adminId});
+        if(!adminData) return res.status(400).send({message:"You are not authorized"});
+        
+        const storeId = req.params.storeId;
+        const userId = req.body.userId;
+        const userExist = await userModel.findOne({_id:userId});
+        if(!userExist) return res.status(400).send({message:"user dose not exist"});
+        
+        const userCredential = {loginId:userId,password:userExist.password};
+        const store = await storeModel.updateOne({storeId:storeId},{$push:{users:userCredential}});
+
+        return res.status(200).send({store:store});
     }catch(err){
         return res.status(500).send(err.message);
     }

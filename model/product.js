@@ -3,11 +3,13 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const productSchema = new mongoose.Schema({
     
-    brandName:{
+    brand:{
         type:String,
         required:true,
+        enum:['Nike','Adidas','Puma','Reebok','Asics','Under Armour','Other'],
         trim:true
     },
+
     productName:{
         type:String,
         required:true,
@@ -55,20 +57,16 @@ const productSchema = new mongoose.Schema({
     //     trim: true
     // },
 
-    style: {
-        type: String,
-        trim: true
-    },
-
     productType: [{ //at least one type
         type: String,
         trim: true,
         enum: ["equipments","clothings","accessories"]
     }],
 
-    installments: {
+    quantity: { 
         type: Number,
-        trim: true
+        trim: true,
+        default:0
     },
 
     deletedAt: {  // when the document is deleted

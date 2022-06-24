@@ -1,14 +1,14 @@
-const cartModel = require("../model/cartModel");
-const productModel = require("../model/productModel");
-const userModel = require("../model/userModel");
+const cartModel = require("../model/cart");
+const productModel = require("../model/product");
+
 
 
 exports.add_cart = async (req,res) =>{
     try{
         const userId = req.user.userId
        
-        const isCartExeste = await cartModel.findOne({ userId: userId });
-        if (!isCartExeste) {
+        const isCartExisted = await cartModel.findOne({ userId: userId });
+        if (!isCartExisted) {
             const cart = req.body
             const totalPrice = 0
             const totalItems = cart.items.length;
@@ -42,17 +42,17 @@ exports.add_cart = async (req,res) =>{
             }
             let body = {}
             body.val = 0
-            let len = isCartExeste.items.length;
+            let len = isCartExisted.items.length;
             for (let i = 0; i < len; i++) {
-                if (cart.items[0].productId == isCartExeste.items[i].productId) {
+                if (cart.items[0].productId == isCartExisted.items[i].productId) {
                     let product = await productModel.findOne({ _id: cart.items[0].productId, isDeleted: false }); // => isdeleted added
                     if (!product) { 
                         return res.status(400).send({ status: false, message: "(2). This product is no longer exist" })
                     }
-                    isCartExeste.totalPrice = Number(isCartExeste.totalPrice) + Number(product.price) * Number(cart.items[0].quantity)
-                    isCartExeste.items[i].quantity = Number(isCartExeste.items[i].quantity) + Number(cart.items[0].quantity)
+                    isCartExisted.totalPrice = Number(isCartExisted.totalPrice) + Number(product.price) * Number(cart.items[0].quantity)
+                    isCartExisted.items[i].quantity = Number(isCartExisted.items[i].quantity) + Number(cart.items[0].quantity)
                     body.val = 1;
-                    isCartExeste.save();
+                    isCartExisted.save();
                 }
             }
             if (body.val == 0) {
@@ -60,12 +60,12 @@ exports.add_cart = async (req,res) =>{
                 if (!product) {
                     return res.status(400).send({setting:{ success:"0", message: "(3). This product is no longer exist" }})
                 }
-                isCartExeste.items.push(cart.items[0]); 
-                isCartExeste.totalItems += 1 
-                isCartExeste.totalPrice = isCartExeste.totalPrice + Number(cart.items[0].quantity) * product.price;
-                isCartExeste.save();
+                isCartExisted.items.push(cart.items[0]); 
+                isCartExisted.totalItems += 1 
+                isCartExisted.totalPrice = isCartExisted.totalPrice + Number(cart.items[0].quantity) * product.price;
+                isCartExisted.save();
             }
-            return res.status(200).send({setting:{ success:"1", msg: "successFul", data: isCartExeste }})
+            return res.status(200).send({setting:{ success:"1", msg: "successFul", data: isCartExisted }})
         }
     
     }catch(err){

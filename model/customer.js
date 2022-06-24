@@ -16,12 +16,12 @@ const userSchema = new mongoose.Schema(
 
     gender: { 
         type: String, 
-        required: true, 
-        enum: ["Mail", "Female", "Trans"] 
+        // required:true,
+        enum: ["Mail", "Female", "Other"] 
     },
     dateOfBirth:{
       type:Date,
-      required:true,
+      // required:true,
       trim:true
     },
 
@@ -29,6 +29,18 @@ const userSchema = new mongoose.Schema(
         type:String,
         enum:["Right","Left"]
     },
+
+    wishLists:[{
+      wishListId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"wishList"
+      }
+    }],
+
+    // playerProfile:{
+    //   type:String,
+    //   enum:["Cricket","Football","Hockey","Tennis","Badminton","Volleyball", "Basketball","Gymnastics","Swimming","TableTennis","WeightLifting","Others"]
+    // },
 
     email: {
       // valid
@@ -53,38 +65,43 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    mail_otp:{
+      type:String,
+      unique:true,
+    },
+
     address: {
       shipping: {
         street: {
           type: String,
-          required: true,
+          //required: true,
           trim: true,
         },
         city: {
           type: String,
-          required: true,
+          //required: true,
           trim: true,
         },
         pinCode: {
           type: Number,
-          required: true,
+          //required: true,
           trim: true,
         },
       },
       billing: {
         street: {
           type: String,
-          required: true,
+          //required: true,
           trim: true,
         },
         city: {
           type: String,
-          required: true,
+          //required: true,
           trim: true,
         },
         pinCode: {
           type: Number,
-          required: true,
+          //required: true,
           trim: true,
         },
       },

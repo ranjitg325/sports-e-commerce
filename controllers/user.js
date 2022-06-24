@@ -1,20 +1,18 @@
-const subAdminModel = require("../model/subAdminModel");
-const adminModel = require("../model/adminModel");
+const subAdminModel = require("../model/user");
+const storeModel = require("../model/store");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 exports.subAdmin_signup = async (req,res) =>{
     try{
-        const adminId = req.params.adminId;
-        //const admin = await adminModel.findOne({_id:adminId});
-        let {firstName,lastName,email,mobileNumber,password,address} = req.body;
+        let {email,password,storeId} = req.body;
         const salt = await bcrypt.genSalt(10);
         password = await bcrypt.hash(password,salt);
-        const subAdminRequest = {firstName,lastName,email,mobileNumber,password,address};
-        const subAdminData = await subAdminModel.create(subAdminRequest);
-         await adminModel.findOneAndUpdate({_id:adminId},{$push:{allSubAdminId:subAdminData._id},new:true});
-       
-        return res.status(201).send({message:"Sub Admin created successfully",data:subAdminData});
+        const userData = await subAdminModel.create({email:email,password:password,storeId:storeId});
+        const loginId= userData._id;
+        const user = {loginId,password};
+        await storeModel.findOneAndUpdate({storeId:storeId},{$push:{subAdmins:user}});
+        return res.status(201).send({message:"Sub Admin data created successfully",userData});
     }catch(err){
         return res.status(500).send(err.message);
     };
@@ -28,7 +26,7 @@ exports.subAdmin_login = async (req,res) =>{
         if(!subAdmin){
           return res.status(400).send({message:"email is not valid or user dose not exist"});
         };
-        const {_id,firstName,lastName,password} = subAdmin;
+        const {_id,password} = subAdmin;
         const validPassword = await bcrypt.compare(subAdminPassword,password);
         if(!validPassword){
             return res.status(400).send({message:"Invalid Password"});
