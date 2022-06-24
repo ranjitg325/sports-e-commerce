@@ -40,7 +40,7 @@ exports.edit_product = async (req, res) => {
       productType,
     } = req.body;
     const updatedProduct = await productModel.findOneAndUpdate(
-      { _id: productId,isDeleted: false },
+      { _id: productId, isDeleted: false },
       {
         brandName: brandName,
         productName: productName,
@@ -51,8 +51,11 @@ exports.edit_product = async (req, res) => {
         productType: productType,
       }
     );
-   
-    if(!updatedProduct) return res.status(400).send({message:"product id is invalid or product dos not exist"});
+
+    if (!updatedProduct)
+      return res
+        .status(400)
+        .send({ message: "product id is invalid or product dos not exist" });
 
     return res.status(200).send({ updatedProduct });
   } catch (err) {
@@ -76,7 +79,7 @@ exports.delete_product = async (req, res) => {
     if (!validUser) {
       return res.status(400).send({ message: "You are not authorized" });
     }
-    
+
     const productId = req.params.productId;
     await productModel.updateOne({ _id: productId }, { isDeleted: true });
 
@@ -97,27 +100,37 @@ exports.get_specific_product_by_query = async (req, res) => {
       productType,
     } = req.query;
 
-    if(brandName || productName || title  || subcategory || priceLes || productType) {
+    if (
+      brandName ||
+      productName ||
+      title ||
+      subcategory ||
+      priceLes ||
+      productType
+    ) {
       let product = {};
       product.isDeleted = false;
-      if(brandName) product.brandName = brandName;
+      if (brandName) product.brandName = brandName;
 
-      if(productName) product.brandName = productName;
+      if (productName) product.brandName = productName;
 
-      if(title) product.title = title;
+      if (title) product.title = title;
 
-      if(subcategory) product.subcategory = subcategory;
+      if (subcategory) product.subcategory = subcategory;
 
-      if(priceLes) product.price = {$lt : priceLes};
+      if (priceLes) product.price = { $lt: priceLes };
 
-      if(priceGr) product.price = {$gt : priceGr};
+      if (priceGr) product.price = { $gt: priceGr };
 
-      const products = await productModel.find(product).sort({price : priceLes});
-      if(!(products.length>0)) return res.status(404).send({message:"no product found"});
+      const products = await productModel
+        .find(product)
+        .sort({ price: priceLes });
+      if (!(products.length > 0))
+        return res.status(404).send({ message: "no product found" });
 
       return res.status(200).send(products);
-    }else {
-      const products = await productModel.find().sort({price:priceLes});
+    } else {
+      const products = await productModel.find().sort({ price: priceLes });
       return res.status(200).send(products);
     }
   } catch (err) {
