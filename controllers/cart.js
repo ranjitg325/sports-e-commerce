@@ -181,7 +181,7 @@ exports.get_cart = async (req, res) => {
     const cartData = await cartModel.findOne({ userId: userId });
     const cartChecked = cartData.items.length;
     if (cartChecked == 0) {
-      return res.status(404).send({ message: "The cart is emptor deleted" });
+      return res.status(404).send({ message: "Your cart is empty" });
     } else {
       return res
         .status(200)

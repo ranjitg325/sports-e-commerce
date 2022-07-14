@@ -43,70 +43,72 @@ exports.subAdmin_login = async (req, res) => {
       return res.status(400).send({ message: "Invalid Password" });
     }
     const payload = { userId: _id, email: subAdminEmail };
-    const generatedToken = jwt.sign(payload, "sports-e-commerce", {
-      expiresIn: "10080",
+    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "10080m",
     });
     res.header("jwt-token", generatedToken);
     return res
       .status(200)
       .send({
-        message: `&{firstName} &{lastName} you have logged in Successfully`,
+        message: ` you have logged in Successfully`,
+        token: generatedToken
       });
   } catch (err) {
     return res.status(500).send(err.message);
   }
 };
 
-exports.subAdmin_update = async (req, res) => {
-  try {
-    const subAdminData = await subAdminModel.findOne({
-      _id: adminRequest.req.user.userId,
-    });
-    if (!subAdminData) {
-      return res.status(400).send({ message: "You are not authorized" });
-    }
-    let { firstName, lastName, mobileNumber, password, address } = req.body;
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      password = await bcrypt.hash(password, salt);
-    }
-    if (address) {
-      if (address.street) {
-        subAdminData.address.street = address.street;
-      }
-      if (address.city) {
-        subAdminData.address.city = address.city;
-      }
-      if (address.pinCode) {
-        subAdminData.address.pinCode = address.pinCode;
-      }
-    }
-    const newSubAdminData = await userModel.findOneAndUpdate(
-      { _id: adminData._id },
-      {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        mobileNumber: mobileNumber,
-        address: subAdminData.address,
-      }
-    );
-    return res
-      .status(201)
-      .send({
-        message: "Sub Admin data updated successfully",
-        UpdatedData: newSubAdminData,
-      });
-  } catch (err) {
-    return res.status(500).send(err.message);
-  }
-};
+// exports.subAdmin_update = async (req, res) => {
+//   try {
+
+//     const subAdminData = await subAdminModel.findOne({
+//       _id:req.user.userId,
+//     });
+//     if (!subAdminData) {
+//       return res.status(400).send({ message: "You are not authorized" });
+//     }
+//     let { firstName, lastName, mobileNumber, password, address } = req.body;
+//     if (password) {
+//       const salt = await bcrypt.genSalt(10);
+//       password = await bcrypt.hash(password, salt);
+//     }
+//     if (address) {
+//       if (address.street) {
+//         subAdminData.address.street = address.street;
+//       }
+//       if (address.city) {
+//         subAdminData.address.city = address.city;
+//       }
+//       if (address.pinCode) {
+//         subAdminData.address.pinCode = address.pinCode;
+//       }
+//     }
+//     const newSubAdminData = await userModel.findOneAndUpdate(
+//       { _id: adminData._id },
+//       {
+//         firstName: firstName,
+//         lastName: lastName,
+//         email: email,
+//         password: password,
+//         mobileNumber: mobileNumber,
+//         address: subAdminData.address,
+//       }
+//     );
+//     return res
+//       .status(201)
+//       .send({
+//         message: "Sub Admin data updated successfully",
+//         UpdatedData: newSubAdminData,
+//       });
+//   } catch (err) {
+//     return res.status(500).send(err.message);
+//   }
+// };
 
 exports.delete_subAdmin = async (req, res) => {
   try {
     const subAdminData = await subAdminModel.findOne({
-      _id: adminRequest.req.user.userId,
+      _id: req.user.userId,
     });
     if (!subAdminData) {
       return res.status(400).send({ message: "You are not authorized" });

@@ -9,7 +9,7 @@ exports.authenticateToken =  (req, res, next) => {
         .status(401)
         .send({ settings: { success: "0", message: "Unauthorized request" } });
 		
-    const user =  jwt.verify(token, "secretKey");
+    const user =  jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = user;
     next();

@@ -1,11 +1,12 @@
-const userMosel = require("../model/user");
+const userModel = require("../model/user");
+const customerModel = require("../model/customer");
 
 const productModel = require("../model/product");
 
 exports.add_product = async (req, res) => {
   try {
     const adminId = req.user.userId;
-    const adminData = await userMosel.findOne({ _id: adminId });
+    const adminData = await userModel.findOne({ _id: adminId });
     if (!adminData) {
       return res.status(400).send({ message: "You are not authorized" });
     }
@@ -23,7 +24,7 @@ exports.add_product = async (req, res) => {
 exports.edit_product = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const userData = await userMosel.findOne({ _id: userId });
+    const userData = await userModel.findOne({ _id: userId });
 
     if (!userData) {
       return res.status(400).send({ message: "You are not authorized" });
@@ -89,7 +90,7 @@ exports.delete_product = async (req, res) => {
   }
 };
 
-exports.get_specific_product_by_query = async (req, res) => {
+exports.get_specific_product = async (req, res) => {
   try {
     const {
       brandName,
@@ -98,7 +99,7 @@ exports.get_specific_product_by_query = async (req, res) => {
       subcategory,
       priceLes,
       productType,
-    } = req.query;
+    } = req.body;
 
     if (
       brandName ||
@@ -137,3 +138,34 @@ exports.get_specific_product_by_query = async (req, res) => {
     return res.status(500).send(err.message);
   }
 };
+
+exports.add_to_wishlist = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const validUser = await customerModel.findOne({ _id: userId });
+    if (!validUser) {
+      return res.status(400).send({ message: "You are not authorized" });
+    }
+    const productId = req.body.productId;
+    await customerModel.updateOne({ _id: userId }, { $push: { wishlist: productId } });
+    
+    return res.status(200).send({ message: "Product added to wishlist" });  
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+exports.remove_from_wishlist = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const validUser = await customerModel.findOne({ _id: userId });
+    if (!validUser) {
+      return res.status(400).send({ message: "You are not authorized" });
+    }
+    const productId = req.body.productId;
+    await customerModel.updateOne({ _id: userId }, { $pull: { wishlist: productId } });
+    
+    return res.status(200).send({ message: "Product removed from wishlist" });  
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}

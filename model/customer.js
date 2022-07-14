@@ -30,11 +30,9 @@ const userSchema = new mongoose.Schema(
         enum:["Right","Left"]
     },
 
-    wishLists:[{
-      wishListId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"wishList"
-      }
+    wishlist:[{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"Product"
     }],
 
     // playerProfile:{
@@ -62,7 +60,8 @@ const userSchema = new mongoose.Schema(
       // minlen 8, maxlen 15 // encrypted password
       type: String,
       required: true,
-      trim: true,
+      trim: true
+     
     },
 
     mail_otp:{

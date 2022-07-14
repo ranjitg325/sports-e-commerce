@@ -18,6 +18,15 @@ const subAdminSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    isDeleted:{
+        type:Boolean,
+        default:false
+    },
+    wishlist:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Product"
+    }]
+    
     
 },{timestamps:true});
 

@@ -86,13 +86,13 @@ exports.login = async (req, res) => {
     const userEmail = req.body.email;
     const userOtp = req.body.otp;
     const dataExist = await customerModel.findOne({ email: userEmail });
-    if (!emailExist)
+    if (!dataExist)
       return res.status(404).send({ message: "user dose not exist" });
     const { _id, firstName, lastName } = dataExist;
-    const validOtp = await bcrypt.compare(userOtp);
-    if (!validOtp) return res.status(400).send({ message: "Invalid Password" });
+    const validOtp = await bcrypt.compare(userOtp, dataExist.mail_otp);
+    if (!validOtp) return res.status(400).send({ message: "Invalid OTP" });
     const payload = { userId: _id, email: userEmail };
-    const generatedToken = jwt.sign(payload, "sports-e-commerce", {
+    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "10080m",
     });
     res.header("jwt-token", generatedToken);
