@@ -17,10 +17,11 @@ const userSchema = new mongoose.Schema(
     gender: { 
         type: String, 
         // required:true,
-        enum: ["Mail", "Female", "Other"] 
+        enum: ["Male", "Female", "Other"] 
     },
     dateOfBirth:{
-      type:Date,
+      type:String,
+      //type:Date,
       // required:true,
       trim:true
     },
@@ -73,34 +74,34 @@ const userSchema = new mongoose.Schema(
       shipping: {
         street: {
           type: String,
-          //required: true,
+          required: true,
           trim: true,
         },
         city: {
           type: String,
-          //required: true,
+          required: true,
           trim: true,
         },
-        pinCode: {
+        pincode: {
           type: Number,
-          //required: true,
+          required: true,
           trim: true,
         },
       },
       billing: {
         street: {
           type: String,
-          //required: true,
+          required: true,
           trim: true,
         },
         city: {
           type: String,
-          //required: true,
+          required: true,
           trim: true,
         },
-        pinCode: {
+        pincode: {
           type: Number,
-          //required: true,
+          required: true,
           trim: true,
         },
       },

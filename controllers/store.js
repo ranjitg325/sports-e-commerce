@@ -6,18 +6,27 @@ const generator = require("generate-password");
 exports.register_store = async (req, res) => {
   try {
     const adminId = req.user.userId;
-    const { storeName, address } = req.body;
-    const id = generator.generateMultiple(1, {
+    const adminData = await adminModel.findOne({ _id: adminId });
+    if (!adminData) {
+      return res
+        .status(400)
+        .send({ setting: { success: "0", message: "You are not authorized" } });
+    }
+    const { storeName, address, storeSize, storeCapacity } = req.body;
+
+    const id =generator.generateMultiple(1, {
       numbers: true,
       chars: true,
       lowercase: true,
       length: 10,
     });
-    const storeId = id[0];
+    const storeId =id[0];
     const storeData = await storeModel.create({
       storeId: storeId,
       storeName: storeName,
       address: address,
+      storeSize :storeSize,
+      storeCapacity: storeCapacity,
       adminId: adminId,
     });
     await adminModel.updateOne({ _id: adminId }, { $push: { stores: storeId } });
@@ -55,21 +64,22 @@ exports.get_store = async (req, res) => {
 exports.edit_store = async (req, res) => {
   try {
     const adminId = req.user.userId;
-    const storeId = req.params.storeId;
+    const storeId = req.body.storeId;
     const adminData = await adminModel.findOne({ _id: adminId });
     if (!adminData) {
       return res
         .status(400)
         .send({ setting: { success: "0", message: "You are not authorized" } });
     }
-    const { storeName, storeSize, storeCapacity } = req.body;
+    const { storeName, address, storeSize, storeCapacity } = req.body;
     const updatedStoreData = await storeModel.findOneAndUpdate(
       { _id: storeId },
       {
         storeName: storeName,
+        address : address,
         storeSize: storeSize,
         storeCapacity: storeCapacity,
-      }
+      },{new:true}
     );
     return res
       .status(201)
@@ -88,7 +98,7 @@ exports.edit_store = async (req, res) => {
 exports.delete_store = async (req, res) => {
   try {
     const adminId = req.user.userId;
-    const storeId = req.params.storeId;
+    const storeId = req.body.storeId;
     const adminData = await adminModel.findOne({ _id: adminId });
     if (!adminData) {
       return res

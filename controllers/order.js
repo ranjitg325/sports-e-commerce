@@ -35,17 +35,24 @@ exports.make_order = async (req, res) => {
 
 exports.cancel_order = async (req, res) => {
   try {
-    const productId = req.body.orderId;
-    const cancelledOrder = await orderModel.updateOne(
-      { _id: productId },
-      { isDeleted: true, deletedAt: Date(), status: "canceled" },
+    const orderId = req.body.orderId;
+    const Order = await orderModel.findOne({ _id: orderId, isDeleted: false })
+    if (!Order) {
+        return res.status(400).send({ status:false, message: 'order id not correct ' })
+    } 
+    const cancelledOrder = await orderModel.findOneAndUpdate(
+      { _id: orderId },
+      { isDeleted: true, deletedAt: Date(), status: "cancelled" },
       { new: true }
     );
+    console.log("error")
     return res
       .status(200)
       .send({
         message: "order has been cancelled successfully",
-        Cancelled_Order: cancelledOrder,
+
+        Cancelled_Order: cancelledOrder
+        
       });
   } catch (err) {
     return res.status(500).send(err.message);

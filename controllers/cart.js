@@ -7,10 +7,10 @@ exports.add_cart = async (req, res) => {
 
     const isCartExisted = await cartModel.findOne({ userId: userId });
     if (!isCartExisted) {
-      const cart = req.body;
-      const totalPrice = 0;
-      const totalItems = cart.items.length;
-      const totalQuantity = cart.items[0].quantity;
+      var cart = req.body;
+      var totalPrice = 0;
+      var totalItems = cart.items.length;
+      var totalQuantity = cart.items[0].quantity;
       if (totalQuantity < 1) {
         return res
           .status(400)
@@ -33,15 +33,15 @@ exports.add_cart = async (req, res) => {
           .send({ message: "(1). This product is no longer exist" });
       }
       totalPrice = demo.price * cart.items[0].quantity;
-      cart.userId = paramsId;
+      cart.userId = userId;
       cart.totalItems = totalItems;
       cart.totalPrice = totalPrice;
       const cartCreate = await cartModel.create(cart);
       return res.status(201).send({ message: "Success", data: cartCreate });
     } else {
-      const cart = req.body;
-      const totalItems = cart.items.length;
-      const totalQuantity = cart.items[0].quantity;
+      var cart = req.body;
+      var totalItems = cart.items.length;
+      var totalQuantity = cart.items[0].quantity;
       if (totalQuantity < 1) {
         return res
           .status(400)
@@ -179,7 +179,7 @@ exports.get_cart = async (req, res) => {
   try {
     const userId = req.user.uerId;
     const cartData = await cartModel.findOne({ userId: userId });
-    const cartChecked = cartData.items.length;
+    const cartChecked = cartData //.items.length;     //(removed this item.length)
     if (cartChecked == 0) {
       return res.status(404).send({ message: "Your cart is empty" });
     } else {
@@ -202,7 +202,7 @@ exports.delete_cart = async (req, res) => {
       { new: true }
     );
     return res
-      .status(204)
+      .status(200)
       .send({ message: "cart deleted successfully", Cart: cartData });
   } catch (err) {
     return res.status(500).send(err.message);

@@ -43,7 +43,7 @@ exports.subAdmin_login = async (req, res) => {
       return res.status(400).send({ message: "Invalid Password" });
     }
     const payload = { userId: _id, email: subAdminEmail };
-    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET, {
+    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {      // "" + added here
       expiresIn: "10080m",
     });
     res.header("jwt-token", generatedToken);

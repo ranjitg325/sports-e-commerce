@@ -28,7 +28,10 @@ exports.admin_login = async (req,res) =>{
                 return res.status(400).send({message:"Invalid Password"});
             };
             let payload = {userId:_id,email:adminEmail};
-            const generatedToken = jwt.sign(payload,"sports-e-commerce",{expiresIn:'10080m'});
+           // const generatedToken = jwt.sign(payload,"sports-e-commerce",{expiresIn:'10080m'}); //i cut this line becoz error occurs "invalid signature"
+            const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {   
+                expiresIn: "10080m",
+              });
             res.header("jwt-token",generatedToken);
             return res.status(201).send({message:`${firstName} ${lastName} You are logged in`,token:generatedToken});
         }else{
@@ -43,7 +46,7 @@ exports.admin_update = async (req,res) =>{
     try{
         const adminRequest = req.user;
         const adminData = await adminModel.findOne({_id:adminRequest.userId});
-        let {firstName,lastName,type,phoneNumber,password,address} = req.body;
+        let {firstName,lastName,email,phoneNumber,password,address} = req.body;    //bt mistake type was written, changed by email
         if(password){
             const salt = await bcrypt.genSalt(10);
             password = await bcrypt.hash(password,salt);
@@ -59,7 +62,7 @@ exports.admin_update = async (req,res) =>{
                 adminData.address.pinCode = address.pinCode;
             };
         }
-        const newAdminData = await userModel.findOneAndUpdate({_id:adminData._id},{firstName:firstName,lastName:lastName,email:email,password:password,phoneNumber:phoneNumber,address:adminData.address});
+        const newAdminData = await adminModel.findOneAndUpdate({_id:adminData._id},{firstName:firstName,lastName:lastName,email:email,password:password,phoneNumber:phoneNumber,address:adminData.address},{new:true});
         return res.status(201).send({message:"Admin data updated successfully",UpdatedData:newAdminData});
     }catch(err){
         return res.status(500).send(err.message);

@@ -54,6 +54,7 @@ const venderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
     address: {
       street: {
         type: String,
@@ -80,6 +81,14 @@ const venderSchema = new mongoose.Schema(
         required: true,
         trim: true,
       },
+    },
+    storeSize :{
+      type: String,
+      trim: true,
+    },
+    storeCapacity : {
+      type: String,
+      trim: true,
     },
   },
   { timestamps: true }

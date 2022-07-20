@@ -8,12 +8,11 @@ exports.authenticateToken =  (req, res, next) => {
       return res
         .status(401)
         .send({ settings: { success: "0", message: "Unauthorized request" } });
-		
-    const user =  jwt.verify(token, process.env.JWT_SECRET);
+    const user =  jwt.verify(token, process.env.JWT_SECRET_KEY);
 
     req.user = user;
     next();
   } catch (err) {
-    return res.status(403).send({ settings: { success: "0", message: "Token expired" } });
+    return res.status(403).send(err.message);
   }
 };

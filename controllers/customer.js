@@ -1,4 +1,4 @@
-const customerModel = require("../model/customer");
+const customerModel = require("../model/customer.js")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const transporter = require("../utils/sendMail");
@@ -18,8 +18,13 @@ exports.user_signup = async (req, res) => {
       address,
     } = req.body;
     const dataExist = await customerModel.findOne({ email: email });
-    if (dataExist)
+    if (dataExist){
       return res.status(400).send({ message: "email already in use" });
+    }
+    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+      return res.status(400).send({ status: false, message: "Please provide valid Email Address" });
+  }
+   
     const salt = await bcrypt.genSalt(10);
     password = await bcrypt.hash(password, salt);
     const userRequest = {
@@ -85,6 +90,7 @@ exports.login = async (req, res) => {
   try {
     const userEmail = req.body.email;
     const userOtp = req.body.otp;
+
     const dataExist = await customerModel.findOne({ email: userEmail });
     if (!dataExist)
       return res.status(404).send({ message: "user dose not exist" });
@@ -92,7 +98,7 @@ exports.login = async (req, res) => {
     const validOtp = await bcrypt.compare(userOtp, dataExist.mail_otp);
     if (!validOtp) return res.status(400).send({ message: "Invalid OTP" });
     const payload = { userId: _id, email: userEmail };
-    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET, {
+    const generatedToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {   
       expiresIn: "10080m",
     });
     res.header("jwt-token", generatedToken);
@@ -122,6 +128,7 @@ exports.userUpdate = async (req, res) => {
       password,
       address,
     } = req.body;
+
     if (password) {
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
@@ -135,23 +142,24 @@ exports.userUpdate = async (req, res) => {
           userData.address.shipping.city = address.shipping.street;
         }
         if (address.shipping.pinCode) {
-          userData.address.shipping.pinCode = address.billing.pinCode;
+          userData.address.shipping.pincode = address.billing.pincode;  //changed pincode spelling
         }
       }
       if (address.billing) {
         if (address.billing.street) {
           userData.address.billing.street = address.billing.street;
         }
-        if (address.billing.street) {
+        if (address.billing.city) {
           userData.address.billing.city = address.billing.city;
         }
-        if (address.billing.street) {
-          userData.address.billing.pinCode = address.billing.pinCode;
+        if (address.billing.pinCode) {
+          userData.address.billing.pincode = address.billing.pincode;
         }
       }
     }
+
     const updatedData = await customerModel.findOneAndUpdate(
-      { _id: _id },
+      { _id: userRequest.userId },
       {
         firstName: firstName,
         lastName: lastName,
@@ -162,10 +170,10 @@ exports.userUpdate = async (req, res) => {
         phone: phone,
         password: password,
         address: userData.address,
-      }
+      },{new:true}
     );
     return res
-      .status(201)
+      .status(200)
       .send({ message: "user profile update successfully", data: updatedData });
   } catch (err) {
     return res.status(500).send(err.message);

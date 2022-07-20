@@ -32,7 +32,7 @@ exports.edit_product = async (req, res) => {
 
     const productId = req.params.productId;
     const {
-      brandName,
+      brand,
       productName,
       title,
       description,
@@ -43,14 +43,14 @@ exports.edit_product = async (req, res) => {
     const updatedProduct = await productModel.findOneAndUpdate(
       { _id: productId, isDeleted: false },
       {
-        brandName: brandName,
+        brand: brand,
         productName: productName,
         title: title,
         description: description,
         subcategory: subcategory,
         price: price,
         productType: productType,
-      }
+      },{new:true}
     );
 
     if (!updatedProduct)
@@ -75,7 +75,8 @@ exports.get_products = async (req, res) => {
 
 exports.delete_product = async (req, res) => {
   try {
-    const userId = req.user;
+    //const userId = req.user;
+    const userId = req.user.userId;
     const validUser = await userModel.findOne({ _id: userId });
     if (!validUser) {
       return res.status(400).send({ message: "You are not authorized" });
@@ -98,6 +99,7 @@ exports.get_specific_product = async (req, res) => {
       title,
       subcategory,
       priceLes,
+      priceGr,
       productType,
     } = req.body;
 
@@ -107,6 +109,7 @@ exports.get_specific_product = async (req, res) => {
       title ||
       subcategory ||
       priceLes ||
+      priceGr ||
       productType
     ) {
       let product = {};
