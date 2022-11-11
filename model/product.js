@@ -27,6 +27,10 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    category : {
+        type: String,
+        trim: true
+    },
     subcategory: [String],
     price: { // valid number decimal
         type: Number,
@@ -51,11 +55,11 @@ const productSchema = new mongoose.Schema({
         default: false
     },
 
-    // productImage: { // s3 link
-    //     type: String,
-    //     required: true,
-    //     trim: true
-    // },
+    images: {  //product images
+        type: Array,
+        required: true,
+        trim: true
+    },
 
     productType: [{ //at least one type
         type: String,

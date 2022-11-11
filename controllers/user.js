@@ -1,5 +1,8 @@
 const subAdminModel = require("../model/user");
 const storeModel = require("../model/store");
+//const orderModel = require("../model/order");
+//var mongodb= require('mongodb');
+//var db = require('database.js');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -122,3 +125,119 @@ exports.delete_subAdmin = async (req, res) => {
     return res.status(500).send(err.message);
   }
 };
+
+
+
+// exports.getSoldProductData = async (req, res) => {
+  
+
+//     const FIRST_MONTH = 1
+// const LAST_MONTH = 12
+// const MONTHS_ARRAY = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ]
+
+// let TODAY = "2020-04-06T23:59:59"
+// let YEAR_BEFORE = "2019-04-07T00:00:00"
+
+// db.orders.aggregate( [
+//   { 
+//       $match: { 
+//           productId: req.body.productId, 
+//           created_at: { $gte: YEAR_BEFORE, $lte: TODAY }
+//       }
+//   },
+//   { 
+//       $group: {
+//           _id: { "year_month": { $substrCP: [ "$created_at", 0, 7 ] } }, 
+//           count: { $sum: 1 }
+//       } 
+//   },
+//   {
+//       $sort: { "_id.year_month": 1 }
+//   },
+//   { 
+//       $project: { 
+//           _id: 0, 
+//           count: 1, 
+//           month_year: { 
+//               $concat: [ 
+//                  { $arrayElemAt: [ MONTHS_ARRAY, { $subtract: [ { $toInt: { $substrCP: [ "$_id.year_month", 5, 2 ] } }, 1 ] } ] },
+//                  "-", 
+//                  { $substrCP: [ "$_id.year_month", 0, 4 ] }
+//               ] 
+//           }
+//       } 
+//   },
+//   { 
+//       $group: { 
+//           _id: null, 
+//           data: { $push: { k: "$month_year", v: "$count" } }
+//       } 
+//   },
+//   { 
+//       $addFields: { 
+//           start_year: { $substrCP: [ YEAR_BEFORE, 0, 4 ] }, 
+//           end_year: { $substrCP: [ TODAY, 0, 4 ] },
+//           months1: { $range: [ { $toInt: { $substrCP: [ YEAR_BEFORE, 5, 2 ] } }, { $add: [ LAST_MONTH, 1 ] } ] },
+//           months2: { $range: [ FIRST_MONTH, { $add: [ { $toInt: { $substrCP: [ TODAY, 5, 2 ] } }, 1 ] } ] }
+//       } 
+//   },
+//   { 
+//       $addFields: { 
+//           template_data: { 
+//               $concatArrays: [ 
+//                   { $map: { 
+//                        input: "$months1", as: "m1",
+//                        in: {
+//                            count: 0,
+//                            month_year: { 
+//                                $concat: [ { $arrayElemAt: [ MONTHS_ARRAY, { $subtract: [ "$$m1", 1 ] } ] }, "-",  "$start_year" ] 
+//                            }                                            
+//                        }
+//                   } }, 
+//                   { $map: { 
+//                        input: "$months2", as: "m2",
+//                        in: {
+//                            count: 0,
+//                            month_year: { 
+//                                $concat: [ { $arrayElemAt: [ MONTHS_ARRAY, { $subtract: [ "$$m2", 1 ] } ] }, "-",  "$end_year" ] 
+//                            }                                            
+//                        }
+//                   } }
+//               ] 
+//          }
+//       }
+//   },
+//   { 
+//       $addFields: { 
+//           data: { 
+//              $map: { 
+//                  input: "$template_data", as: "t",
+//                  in: {   
+//                      k: "$$t.month_year",
+//                      v: { 
+//                          $reduce: { 
+//                              input: "$data", initialValue: 0, 
+//                              in: {
+//                                  $cond: [ { $eq: [ "$$t.month_year", "$$this.k"] },
+//                                               { $add: [ "$$this.v", "$$value" ] },
+//                                               { $add: [ 0, "$$value" ] }
+//                                  ]
+//                              }
+//                          } 
+//                      }
+//                  }
+//               }
+//           }
+//       }
+//   },
+//   {
+//       $project: { 
+//           data: { $arrayToObject: "$data" }, 
+//           _id: 0 
+//       } 
+//   }
+// ] )
+
+
+ 
+// }

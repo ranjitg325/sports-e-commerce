@@ -9,5 +9,9 @@ router.post('/signup',subAdminController.subAdmin_signup);
 router.post('/login',subAdminController.subAdmin_login);
 // router.put('/update',middleware.authenticateToken,subAdminController.subAdmin_update);
 router.put('/delete_account',middleware.authenticateToken,subAdminController.delete_subAdmin);
+// router.get('/getSoldProductData',subAdminController.getSoldProductData)
 
 module.exports=router;
+
+
+
